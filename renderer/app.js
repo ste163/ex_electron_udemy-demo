@@ -1,4 +1,5 @@
 // Handles everything with the UI
+// Course has all these in 1 file --- in a real app, separate helper functions
 
 // Modules
 const { ipcRenderer } = require('electron')
@@ -9,6 +10,8 @@ const showModal = document.getElementById('show-modal'),
       modal = document.getElementById('modal'),
       addItem = document.getElementById('add-item')
       itemUrl = document.getElementById('url')
+
+
 
 
 // Disable and Enable modal buttons while submitting
@@ -29,6 +32,9 @@ const toggleModalBtns = () => {
     }
 }
 
+
+
+
 // Listeners from Main Process
 // When we get an item back from the Main Process
 ipcRenderer.on('new-item-success', (e, newItem) => {
@@ -40,6 +46,10 @@ ipcRenderer.on('new-item-success', (e, newItem) => {
     itemUrl.value = ''
 })
 
+
+
+
+// Setup event Listeners
 // Show modal
 showModal.addEventListener('click', e => {
     modal.style.display = 'flex'
@@ -52,7 +62,7 @@ closeModal.addEventListener('click', e => {
     modal.style.display = 'none'
 })
 
-// Handle new item
+// Add new item
 addItem.addEventListener('click', e => {
     const url = itemUrl.value
     // Check if url exists
