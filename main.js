@@ -13,8 +13,8 @@ function createWindow () {
     webPreferences: { nodeIntegration: true }
   })
 
-  // Load index.html into the new BrowserWindow
-  mainWindow.loadFile('index.html')
+  // Load main.html into the new BrowserWindow
+  mainWindow.loadFile('renderer/main.html')
 
   // Open DevTools - Remove for PRODUCTION!
   mainWindow.webContents.openDevTools();
