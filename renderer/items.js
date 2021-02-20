@@ -25,6 +25,7 @@ exports.select = e => {
 exports.changeSelection = direction => {
     // Get selected item
     const currentItem = document.getElementsByClassName('read-item selected')[0]
+
     // Handle up/down based on if there is a previous or next element
     if (direction === 'ArrowUp' && currentItem.previousElementSibling) {
         currentItem.classList.remove('selected')
@@ -35,12 +36,27 @@ exports.changeSelection = direction => {
     }
 }
 
+// Open selected item
+exports.open = () => {
+    // Only open if we have items
+    if (!this.storage.length) return
+    
+    // Get selected Item
+    const currentItem = document.getElementsByClassName('read-item selected')[0]
+
+    // Get item's URL from it's data attribute 'data-url'
+    const contentUrl = currentItem.dataset.url
+
+    console.log('opening', contentUrl)
+}
 
 // Adds new item to items node
 exports.addItem = (item, isNew = false) => {
     // Create the new item node
     const itemNode = document.createElement('article')
     itemNode.setAttribute('class', 'read-item')
+    // Set item url as data attribute --- data attributes allow us to add custom properties to HTML tags and store simple info
+    itemNode.setAttribute('data-url', item.url)
     itemNode.innerHTML = `<img src="${item.screenshot}"><h2>${item.title}</h2>`
 
     // Append new item to the items node
@@ -48,6 +64,9 @@ exports.addItem = (item, isNew = false) => {
 
     // Add eventListener for selecting
     itemNode.addEventListener('click', this.select)
+
+    // Add eventListener for opening --- first click selects, second click opens selected item. Must be in quick succession though
+    itemNode.addEventListener('dblclick', this.open)
 
     // If this is the first item, select it
     if (document.getElementsByClassName('read-item').length === 1) {
