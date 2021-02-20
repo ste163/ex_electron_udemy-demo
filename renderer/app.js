@@ -12,6 +12,9 @@ const showModal = document.getElementById('show-modal'),
       itemUrl = document.getElementById('url')
       search = document.getElementById('search')
 
+
+
+
 // Filter items when searching
 search.addEventListener('keyup', e => {
     // Loop through items by making them an array
@@ -24,6 +27,12 @@ search.addEventListener('keyup', e => {
 })
 
 
+// Navigate list using arrow keys
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        items.changeSelection(e.key)
+    }
+})
 
 // Disable and Enable modal buttons while submitting
 const toggleModalBtns = () => {
