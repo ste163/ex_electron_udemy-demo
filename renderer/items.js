@@ -1,5 +1,14 @@
 // items.js holds function for adding items to the list
 // and storing them
+const fs = require('fs')
+
+// Get readerJS content by using Node's File System module
+// Read reader.js and assign its content as a string
+// We do this so we can pass it into readerWin.eval()
+let readerJS
+fs.readFile(`${__dirname}/reader.js`, (err, data) => {
+    readerJS = data.toString()
+})
 
 // DOM Nodes
 const items = document.getElementById('items')
@@ -47,7 +56,23 @@ exports.open = () => {
     // Get item's URL from it's data attribute 'data-url'
     const contentUrl = currentItem.dataset.url
 
-    console.log('opening', contentUrl)
+    // Open Proxy Window with saved website inside.
+    // Empty string names the new window as the content title
+    // nodeIntegration set to false and contextIsolation to true
+        // secures the proxy window from the file system
+        // runs browser JS in an isolated sandbox
+    const readerWin = window.open(contentUrl, '', `
+        maxWidth=2000,
+        maxHeight=2000,
+        width=1200,
+        height=800,
+        backgroundColor=#DEDEDE
+        nodeIntegration=0
+        contextIsolation=1
+    `)
+
+    // Inject our JavaScript on the readerWin
+    readerWin.eval(readerJS)
 }
 
 // Adds new item to items node
