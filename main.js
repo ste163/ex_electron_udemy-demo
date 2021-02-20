@@ -35,7 +35,7 @@ function createWindow () {
   })
 
   // Create app menu (it's name based on what we call in import)
-  appMenu() 
+  appMenu(mainWindow.webContents) 
 
   // Load main.html into the new BrowserWindow
   mainWindow.loadFile('renderer/main.html')

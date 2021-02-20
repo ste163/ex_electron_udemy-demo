@@ -2,12 +2,51 @@ const { Menu, shell } = require('electron')
 // Always create native menus inside the Main Process
 // We will also setup keyboard shortcuts
 
-module.exports = () => {
+module.exports = appWin => {
     // Create Menu Template
     const template = [
         {
             label: 'Items',
-            submenu: []
+            submenu: [
+                {
+                    label: 'Add New',
+                    accelerator: 'CmdOrCtrl+N',
+                    click: () => {
+                        // Does same as clicking plus button to add item
+                        // Done by sending a one-way IPC message to app.js
+                        // Electron handles this internally, no need to import IPC
+                        appWin.send('menu-show-modal')
+                    }
+                },
+                {
+                    label: 'Read Item',
+                    accelerator: 'CmdOrCtrl+Enter',
+                    click: () => {
+                        appWin.send('menu-open-item')
+                    }
+                },
+                {
+                    label: 'Delete item',
+                    accelerator: 'CmdOrCtrl+Delete',
+                    click:() => {
+                        appWin.send('menu-delete-item')
+                    }
+                },
+                {
+                    label: 'Open in Browser',
+                    accelerator: 'CmdOrCtrl+Shift+Enter',
+                    click: () => {
+                        appWin.send('menu-open-item-native')
+                    }
+                },
+                {
+                    label: 'Search items',
+                    accelerator: 'CmdOrCtrl+F',
+                    click: () => {
+                        appWin.send('menu-focus-search')
+                    }
+                }
+            ]
         },
         {
             // Have Electron generate edit menu based on OS

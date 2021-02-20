@@ -12,7 +12,31 @@ const showModal = document.getElementById('show-modal'),
       itemUrl = document.getElementById('url')
       search = document.getElementById('search')
 
+// Open modal from menu item
+ipcRenderer.on('menu-show-modal', () => {
+    showModal.click()
+})
 
+// Open selected item from menu
+ipcRenderer.on('menu-open-item', () => {
+    items.open()
+})
+
+// Open selected item in native browser window from menu
+ipcRenderer.on('menu-open-item-native', () => {
+    items.openNative()
+})
+
+// Delete selected item from menu
+ipcRenderer.on('menu-delete-item', () => {
+    const index = items.getSelectedItem().itemIndex
+    items.delete(index)
+})
+
+// Focus search input from menu
+ipcRenderer.on('menu-focus-search', () => {
+    search.focus()
+})
 
 
 // Filter items when searching

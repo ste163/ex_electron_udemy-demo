@@ -1,6 +1,7 @@
+const { shell } = require('electron')
+const fs = require('fs')
 // items.js holds function for adding items to the list
 // and storing them
-const fs = require('fs')
 
 // DOM Nodes
 const items = document.getElementById('items')
@@ -122,6 +123,21 @@ exports.open = () => {
 
     // Inject our JavaScript on the readerWin
     readerWin.eval(readerJS.replace('{{index}}', currentItem.itemIndex))
+}
+
+// Open selected item in native browser
+exports.openNative = () => {
+    // Only open if we have items
+    if (!this.storage.length) return
+
+    // Get selected Item
+    const currentItem = this.getSelectedItem()
+
+    // Get item's URL from it's data attribute 'data-url'
+    const contentUrl = currentItem.node.dataset.url
+
+    // Open default browser
+    shell.openExternal(contentUrl)
 }
 
 // Adds new item to items node
