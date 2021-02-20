@@ -1,8 +1,8 @@
+const { ipcRenderer } = require('electron')
+const items = require('./items')
 // Handles everything with the UI
 // Course has all these in 1 file --- in a real app, separate helper functions
 
-// Modules
-const { ipcRenderer } = require('electron')
 
 // DOM nodes
 const showModal = document.getElementById('show-modal'),
@@ -34,11 +34,13 @@ const toggleModalBtns = () => {
 
 
 
-
 // Listeners from Main Process
 // When we get an item back from the Main Process
 ipcRenderer.on('new-item-success', (e, newItem) => {
-    console.log(newItem)
+    // Add new item to "items" node
+    items.addItem(newItem, true)
+
+    // Enable modal buttons
     toggleModalBtns()
 
     // Hide modal and clear value
