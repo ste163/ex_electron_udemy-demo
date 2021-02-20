@@ -10,7 +10,18 @@ const showModal = document.getElementById('show-modal'),
       modal = document.getElementById('modal'),
       addItem = document.getElementById('add-item')
       itemUrl = document.getElementById('url')
+      search = document.getElementById('search')
 
+// Filter items when searching
+search.addEventListener('keyup', e => {
+    // Loop through items by making them an array
+    Array.from(document.getElementsByClassName('read-item')).forEach(item => {
+        // Hide items that don't match search value --- hasMatch returns a bool
+        const hasMatch = item.innerText.toLowerCase().includes(search.value)
+        // Flex is the default display property
+        item.style.display = hasMatch ? 'flex' : 'none'
+    })
+})
 
 
 
