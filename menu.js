@@ -1,4 +1,4 @@
-const { Menu } = require('electron')
+const { Menu, shell } = require('electron')
 // Always create native menus inside the Main Process
 // We will also setup keyboard shortcuts
 
@@ -19,7 +19,14 @@ module.exports = () => {
         {
             // Convention has a help menu last. We have to add extra content for this role
             role: 'help',
-            submenu: []
+            submenu: [
+                {
+                    label: 'Documentation',
+                    click: () => {
+                        shell.openExternal('https://google.com')
+                    }
+                }
+            ]
         }
     ]
 
