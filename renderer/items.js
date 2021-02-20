@@ -2,6 +2,9 @@
 // and storing them
 const fs = require('fs')
 
+// DOM Nodes
+const items = document.getElementById('items')
+
 // Get readerJS content by using Node's File System module
 // Read reader.js and assign its content as a string
 // We do this so we can pass it into readerWin.eval()
@@ -10,11 +13,57 @@ fs.readFile(`${__dirname}/reader.js`, (err, data) => {
     readerJS = data.toString()
 })
 
-// DOM Nodes
-const items = document.getElementById('items')
+// Listen for 'done' button click on proxy browser window
+window.addEventListener('message', e => {
+    // Check message is correct for deleting
+    if (e.data.action === 'delete-reader-item') {
+        // Delete item at certain index
+        this.delete(e.data.itemIndex)
+
+        // Once deleted, close proxy window
+        e.source.close()
+    }
+})
+
+// Delete item
+exports.delete = index => {
+    // Remove item from DOM
+    items.removeChild(items.childNodes[index])
+
+    // Remove from storage
+    this.storage.splice(index, 1) // remove 1 item at param index
+
+    // Save changes
+    this.save()
+
+    // Reset selection
+    if (this.storage.length) {
+        // Get new selected item
+        const newSelectedIndex = (index === 0) ? 0 : index - 1
+
+        // Select item at new index
+        document.getElementsByClassName('read-item')[newSelectedIndex].classList.add('selected')
+    }
+}
+
+// Get item index
+exports.getSelectedItem = () => {
+    // get selected node
+    const currentItem = document.getElementsByClassName('read-item selected')[0]
+
+    // get Index from parent container
+    let itemIndex = 0
+    let child = currentItem
+    // While we have a previous sibling, add to the itemIndex, or set null if first
+    while((child = child.previousElementSibling) !== null) itemIndex++
+
+    // Return selected item and itemIndex
+    return { node: currentItem, itemIndex }
+}
 
 // Storage --- if there's data, parse the string back into an object OR set default to an empty []
 exports.storage = JSON.parse(localStorage.getItem('readit-items')) || []
+
 
 // Persist storage --- must be in a string
 exports.save = () => {
@@ -24,7 +73,7 @@ exports.save = () => {
 // Set selected items
 exports.select = e => {
     // Deselect currently selected, if there is one
-    document.getElementsByClassName('read-item selected')[0].classList.remove('selected')
+    this.getSelectedItem().node.classList.remove('selected')
 
     // Add selected class to clicked item
     e.currentTarget.classList.add('selected')
@@ -33,7 +82,7 @@ exports.select = e => {
 // Select item based on arrow keys --- direction is ArrowUp or ArrowDown
 exports.changeSelection = direction => {
     // Get selected item
-    const currentItem = document.getElementsByClassName('read-item selected')[0]
+    const currentItem = this.getSelectedItem().node
 
     // Handle up/down based on if there is a previous or next element
     if (direction === 'ArrowUp' && currentItem.previousElementSibling) {
@@ -51,10 +100,10 @@ exports.open = () => {
     if (!this.storage.length) return
     
     // Get selected Item
-    const currentItem = document.getElementsByClassName('read-item selected')[0]
+    const currentItem = this.getSelectedItem()
 
     // Get item's URL from it's data attribute 'data-url'
-    const contentUrl = currentItem.dataset.url
+    const contentUrl = currentItem.node.dataset.url
 
     // Open Proxy Window with saved website inside.
     // Empty string names the new window as the content title
@@ -72,7 +121,7 @@ exports.open = () => {
     `)
 
     // Inject our JavaScript on the readerWin
-    readerWin.eval(readerJS)
+    readerWin.eval(readerJS.replace('{{index}}', currentItem.itemIndex))
 }
 
 // Adds new item to items node
